@@ -842,3 +842,108 @@ const keyLayout = [
         }
     ]
 ] 
+
+
+class Key {
+    constructor(lowercase, uppercase, isLetter) {
+        this.values = [
+            {
+                lowercase: lowercase,
+                uppercase: uppercase, 
+                isLetter :isLetter,
+            }
+        ],
+        this.currentLayoutIndex = 0; 
+        this.layoutsnumber = 1;
+        this.DOMElement; 
+    }
+
+    addLayout (lowercase, uppercase, isLetter) {
+        this.values.push({
+            lowercase: lowercase,
+            uppercase: uppercase,
+            isLetter: isLetter
+        });
+        this.layoutsnumber++;
+    }
+
+    switchLayout() {
+        if (this.currentLayoutIndex === this.layoutsnumber - 1) {
+            this.currentLayoutIndex = 0;
+        } 
+              
+        this.currentLayoutIndex++;
+    }
+
+    getLowerValue () {
+        return this.values[this.currentLayoutIndex].lowercase;
+    }
+
+    getUpperValue() {
+        return this.values[this.currentLayoutIndex].uppercase;
+    }
+
+    getCAPSValues() {
+        let value  = this.values[this.currentLayoutIndex];
+        if (value.isLetter) {
+            return value.uppercase; 
+        } else {
+            return value.lowercase;
+        }
+    }
+}
+
+let textArea;
+//DOM object with keyboard
+let keyboard;
+//list of pair code-key 
+let keys = {};
+let isCAPSOn = false;
+let isShiftOn = false;
+
+function initKeyboard() {
+    textarea = document.createElement('textarea');
+    textarea.className = 'textarea';
+    document.body.append(textarea);
+    textarea.setAttribute('rows', 17);
+    textarea.setAttribute('cols', 100);
+
+    let virtualKeyboard = document.createElement('div');
+    virtualKeyboard.className = 'virtual-keyboard';
+    document.body.append(virtualKeyboard);
+
+    keyboard = document.createElement('div');
+    keyboard.className = 'virtual-keyboard__keys';
+    virtualKeyboard.appendChild(keyboard);
+}
+
+function initKeys() {
+    for (let row of keyLayout) {
+        let keyRow = document.createElement('div');   
+        for (let keyData of row) {
+            let keyVirtual = new Key(keyData.rus.lower, keyData.rus.upper, keyData.rus.isLetter);
+            keyVirtual.addLayout(keyData.eng.lower, keyData.eng.upper, keyData.eng.isLetter); // add the second language
+
+            key = document.createElement('button'); // create element in DOM
+            key.innerHTML = keyData.rus.lower;
+            keyRow.append(key); // add to the row
+            
+            let initialValue = keyData.rus.lower; 
+            if (initialValue === 'Backspace' || initialValue === 'CapsLock' || initialValue === 'SHIFT' || initialValue === 'Shift' || initialValue === 'ENTER') {
+                key.className = 'virtual-keyboard__key virtual-keyboard__key--wide';
+            }
+            else if (initialValue === ' ') {
+                key.className = 'virtual-keyboard__key virtual-keyboard__key--extra-wide';
+            } else {
+                key.className = 'virtual-keyboard__key';    
+            }
+            
+            keyVirtual.DOMElement = key; // 
+            keys[keyData.code] = keyVirtual; // key - value; value = object with key data
+        }
+        keyboard.append(keyRow); 
+    }
+}
+
+initKeyboard();
+initKeys();
