@@ -958,8 +958,33 @@ function initEvents() {
         let key = keys[event.keyCode].DOMElement;
         key.style.background = 'rgba(255, 255, 255, 0.5)'
     });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.keyCode == 20) {
+            onCapsPressed();
+        }});
 }
+
+function onCapsPressed() {  
+    if (isCAPSOn === false) {
+        for (let keyCode in keys) {
+            let key = keys[keyCode];
+            let el = key.getCAPSValues();
+            key.DOMElement.innerHTML = el;
+        }
+    } else {
+        for (let keyCode in keys) {
+            let key = keys[keyCode];
+            let el = key.getLowerValue();
+            key.DOMElement.innerHTML = el;
+        }
+    }
+
+    isCAPSOn = !isCAPSOn;
+}
+
+
 
 initKeyboard();
 initKeys();
-initEvents()
+initEvents();
