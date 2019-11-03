@@ -949,13 +949,17 @@ function initEvents() {
     document.addEventListener('keydown', (event) => {
         let key = keys[event.keyCode].DOMElement;
         key.style.background = 'purple';
+        key.style.transform = 'translateY(-4px)';
+        key.style.transition = 'transform 10ms ease-in';
+    });
 
-        let focus = document.querySelector('.textarea');
-        focus.focus();
+    document.addEventListener('keypress', (event) => {
+        textArea.value += event.key;
     });
 
     document.addEventListener('keyup', (event) => {
         let key = keys[event.keyCode].DOMElement;
+        key.style.transform = 'translateY(0px)';
         key.style.background = 'rgba(255, 255, 255, 0.5)'
     });
 
