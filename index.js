@@ -44,7 +44,7 @@ const keyLayout = [
             rus: {
                 lower: '3',
                 upper: '№',
-                isLetter: true,
+                isLetter: false,
             },
             eng: {
                 lower: '3',
@@ -945,5 +945,21 @@ function initKeys() {
     }
 }
 
+function initEvents() {  
+    document.addEventListener('keydown', (event) => {
+        let key = keys[event.keyCode].DOMElement;
+        key.style.background = 'purple';
+
+        let focus = document.querySelector('.textarea');
+        focus.focus();
+    });
+
+    document.addEventListener('keyup', (event) => {
+        let key = keys[event.keyCode].DOMElement;
+        key.style.background = 'rgba(255, 255, 255, 0.5)'
+    });
+}
+
 initKeyboard();
 initKeys();
+initEvents()
