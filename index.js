@@ -853,7 +853,7 @@ class Key {
                 isLetter :isLetter,
             }
         ],
-        this.currentLayoutIndex = 0; 
+        this.currentLayoutIndex = 0; // show active keyboard layout
         this.layoutsnumber = 1;
         this.DOMElement; 
     }
@@ -902,11 +902,11 @@ let isCAPSOn = false;
 let isShiftOn = false;
 
 function initKeyboard() {
-    textarea = document.createElement('textarea');
-    textarea.className = 'textarea';
-    document.body.append(textarea);
-    textarea.setAttribute('rows', 17);
-    textarea.setAttribute('cols', 100);
+    textArea = document.createElement('textarea');
+    textArea.className = 'textarea';
+    document.body.append(textArea);
+    textArea.setAttribute('rows', 17);
+    textArea.setAttribute('cols', 100);
 
     let virtualKeyboard = document.createElement('div');
     virtualKeyboard.className = 'virtual-keyboard';
@@ -951,22 +951,121 @@ function initEvents() {
         key.style.background = 'purple';
         key.style.transform = 'translateY(-4px)';
         key.style.transition = 'transform 10ms ease-in';
+
+
+    /*    document.onkeyup = function(e) {  // смена языка
+            if (e.altKey && e.shiftKey == 18) {
+                let el = keys[keyCode].switchLayout();
+                keys[keyCode].DOMElement.innerHTML = el;
+            };
+        };   */
     });
 
+    /*for (let keyCode in keys) {  // смена языка
+        let key = keys[keyCode]; 
+        key.DOMElement.addEventListener('keyup', () => {           
+            if (keyCode == 16 && keyCode == 18) {
+                let el = key.switchLayout();
+                key.DOMElement.innerHTML = el;
+            }
+        })
+    }*/
+
     document.addEventListener('keypress', (event) => {
-        textArea.value += event.key;
+        textArea.append(event.key); 
     });
 
     document.addEventListener('keyup', (event) => {
         let key = keys[event.keyCode].DOMElement;
         key.style.transform = 'translateY(0px)';
         key.style.background = 'rgba(255, 255, 255, 0.5)'
+        
+        /*for (let keyCode in keys) {                    
+            if (keyCode == 13) {  // enter
+                let paragraph = '\n';
+                textArea.append(paragraph);
+                return;
+            }
+            if (keyCode == 9) {  // tab
+                let tab = '   ';
+                textArea.append(tab);
+                return;
+            }
+        }*/
     });
+
+
+    // work with virtual keyboard
+    for (let keyCode in keys) {
+        let key = keys[keyCode]
+        key.DOMElement.addEventListener('click', () => {
+            if (keyCode == 20) {
+                return onCapsPressed();
+            }
+
+            if (keyCode == 16 || keyCode == 17 || keyCode == 18 || keyCode == 91) {   //  shift, ctrl, alt
+                return;
+            }
+
+            if (keyCode == 13) {   // enter
+                let paragraph = '\n';
+                textArea.append(paragraph);
+                return ;
+            }
+
+            if (keyCode == 9) {  // tab
+                let tab = '   ';
+                textArea.append(tab);
+                return;
+            }
+
+            let el = key.DOMElement.innerHTML;
+            textArea = document.querySelector('.textarea');
+            
+            /*if (keyCode == 8 || keyCode == 46) {  // backspace, del
+                return el.remove();
+            }*/
+
+            textArea.append(el);
+        });
+
+        key.DOMElement.addEventListener('mousedown', () => {
+            key.DOMElement.style.background = 'purple';
+            key.DOMElement.style.transform = 'translateY(-4px)';
+            key.DOMElement.style.transition = 'transform 10ms ease-in';
+
+            if (keyCode == 16) {
+                return onShiftPressed();
+            }
+        });
+
+        key.DOMElement.addEventListener('mouseup', () => {
+            key.DOMElement.style.transform = 'translateY(0px)';
+            key.DOMElement.style.background = 'rgba(255, 255, 255, 0.5)'
+
+            if (keyCode == 16) {
+                return onShiftDown();
+            }
+        });
+    };
 
     document.addEventListener('keyup', (event) => {
         if (event.keyCode == 20) {
             onCapsPressed();
-        }});
+        }
+    });
+    
+    document.addEventListener('keydown', (event) => {
+        if (event.keyCode == 16) {
+            onShiftPressed();
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (event.keyCode == 16) {
+            onShiftDown();
+        };
+    })
 }
 
 function onCapsPressed() {  
@@ -987,7 +1086,21 @@ function onCapsPressed() {
     isCAPSOn = !isCAPSOn;
 }
 
+function onShiftPressed() {
+    for (let keyCode in keys) {
+        let key = keys[keyCode];
+        let el = key.getUpperValue();
+        key.DOMElement.innerHTML = el;
+    }
+}
 
+function onShiftDown() {
+    for (let keyCode in keys) {
+        let key = keys[keyCode];
+        let el = key.getLowerValue();
+        key.DOMElement.innerHTML = el;
+    }
+}
 
 initKeyboard();
 initKeys();

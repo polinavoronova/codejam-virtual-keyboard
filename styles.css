@@ -43,10 +43,6 @@
   padding: 0;
 }
 
-.virtual-keyboard__key:active {
-  background: rgba(255, 255, 255, 0.22);
-}
-
 .virtual-keyboard__key--wide {
   width: 107px;
 }
