@@ -868,11 +868,24 @@ class Key {
     }
 
     switchLayout() {
-        if (this.currentLayoutIndex === this.layoutsnumber - 1) {
+        if (this.currentLayoutIndex === this.layoutsnumber-1) {
             this.currentLayoutIndex = 0;
-        } 
-              
-        this.currentLayoutIndex++;
+        } else {
+            this.currentLayoutIndex++;
+        }
+
+
+        if (isCAPSOn) {  // true/false?
+            this.DOMElement.innerHTML = this.getCAPSValues();
+            return;
+        }
+
+        if (isShiftOn) {  // true/false?
+            this.DOMElement.innerHTML = this.getUpperValue();
+            return;
+        }
+
+        this.DOMElement.innerHTML = this.getLowerValue();
     }
 
     getLowerValue () {
@@ -951,25 +964,18 @@ function initEvents() {
         key.style.background = 'purple';
         key.style.transform = 'translateY(-4px)';
         key.style.transition = 'transform 10ms ease-in';
-
-
-    /*    document.onkeyup = function(e) {  // смена языка
-            if (e.altKey && e.shiftKey == 18) {
-                let el = keys[keyCode].switchLayout();
-                keys[keyCode].DOMElement.innerHTML = el;
-            };
-        };   */
     });
 
-    /*for (let keyCode in keys) {  // смена языка
-        let key = keys[keyCode]; 
-        key.DOMElement.addEventListener('keyup', () => {           
-            if (keyCode == 16 && keyCode == 18) {
-                let el = key.switchLayout();
-                key.DOMElement.innerHTML = el;
+    document.addEventListener('keydown', (event) => {  // может перенести в верхний ивент?
+        if (event.altKey && event.shiftKey) {
+            for (let keyCode in keys) { 
+                let key = keys[keyCode]; 
+                key.switchLayout();
             }
-        })
-    }*/
+        };
+    })  
+
+
 
     document.addEventListener('keypress', (event) => {
         textArea.append(event.key); 
@@ -994,6 +1000,15 @@ function initEvents() {
         }*/
     });
 
+    document.addEventListener('keyup', (event) => {    
+        for (let keyCode in keys) {                    
+            if (keyCode == 8) {  // backspace
+                let focus = document.querySelector('.textarea');
+                focus.focus();
+                return;
+            }
+        }
+    });
 
     // work with virtual keyboard
     for (let keyCode in keys) {
