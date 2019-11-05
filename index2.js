@@ -852,7 +852,7 @@ class Key {
         this.maxLayoutIndex = this.values.length -1;
     }
  
-    setCurrentValue(isCapsOn,isShiftOn) {
+    setCurrentValue(isCapsOn,isShiftOn) { 
         if (isCapsOn) {
             if(isShiftOn) {
                 this.DOMElement.innerHTML = this.getLowercase(isCapsOn);
@@ -886,5 +886,159 @@ class Key {
         }
 
         this.setCurrentValue(isCapsOn, false);
+    }
+}
+
+class Keyboard {
+    constructor(keyLayout, keyboardObject, isCapsOn) {
+        // set of pairs Code: key
+        this.keys = {};
+        this.isCapsOn = isCapsOn;
+        this.isShiftOn = false;
+        this.initKeys(keyLayout, keyboardObject, isCapsOn);
+    }
+
+    initKeys(keyLayout, keyboardObject, isCapsOn) {
+        for (let row of keyLayout) {
+            let keyRow = document.createElement('div');   
+            for (let keyData of row) {    
+                let keyDOM = document.createElement('button'); // create element in DOM
+                let key = new Key([keyData.rus, keyData.eng], keyDOM, isCapsOn); 
+                keyRow.append(key); // add to the row
+                
+                let initialValue = keyData.rus.lower; 
+                if (initialValue === 'Backspace' || initialValue === 'CapsLock' || initialValue === 'SHIFT' || initialValue === 'Shift' || initialValue === 'ENTER') {
+                    key.className = 'virtual-keyboard__key virtual-keyboard__key--wide';
+                }
+                else if (initialValue === ' ') {
+                    key.className = 'virtual-keyboard__key virtual-keyboard__key--extra-wide';
+                } else {
+                    key.className = 'virtual-keyboard__key';    
+                }
+
+                this.keys[keyData.code] = key; // key - value; value = object with key data
+            }
+            keyboardObject.append(keyRow); 
+        }
+    }
+
+    initEvents(keyboardObject) {
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+                onShiftDown();
+            }
+
+            else if (event.shiftKey && event.altKey) {
+                onLayoutSwitch();
+            }
+
+            else if (event.code === 'ControlLeft' || event.code === 'ControlRight') {
+                return;
+            }
+
+            else if (event.code === 'CapsLock') {
+                onCapsPressed();
+            }
+
+            else if (event.code === 'Tab') {
+                onTabDown();
+            }
+
+            else if (event.code === 'Backspace') {
+                onBackspaceDown();
+            }
+
+            else if (event.code === 'Enter') {
+                onEnterDown();
+            } else {
+                onLetterDown(event.target.innerHTML);
+            }
+        
+        });
+
+        for (let keyCode in this.keys) {
+            let key = this.keys[keyCode];
+
+            key.DOMElement.addEventListener('click', (keyCode) => {
+                if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+                    onShiftDown();
+                }
+
+                else if (keyCode === 'ControlLeft' || keyCode === 'ControlRight') {
+                    return;
+                }
+    
+                else if (keyCode === 'CapsLock') {
+                    onCapsPressed();
+                }
+    
+                else if (keyCode === 'Tab') {
+                    onTabDown();
+                }
+    
+                else if (keyCode === 'Backspace') {
+                    onBackspaceDown();
+                }
+    
+                else if (keyCode === 'Enter') {
+                    onEnterDown();
+                } else {
+                    onLetterDown(keyCode);
+                }
+            })
+        }
+    }
+
+
+    onShiftDown() {
+        this.isShiftOn = true;
+
+        for (let keyCode in this.keys) {
+            this.keys[keyCode].setCurrentValue(this.isCapsOn, this.isShiftOn);
+        }
+    }
+
+    onShiftUp() {
+        this.isShiftOn = false;
+
+        for (let keyCode in this.keys) {
+            this.keys[keyCode].setCurrentValue(this.isCapsOn, this.isShiftOn);
+        }
+    }
+    
+    onLayoutSwitch() {
+        for (let keyCode in this.keys) {
+            this.keys[keyCode].switchLayout(this.isCapsOn);
+        }
+    }
+
+    onCapsPressed() {
+        this.isCapsOn = !this.isCapsOn;
+
+        for (let keyCode in this.keys) {
+            this.keys[keyCode].setCurrentValue(this.isCapsOn, this.isShiftOn);
+        }
+    }
+
+    onTabDown() {
+        const textarea = document.getElementsByClassName('.textarea');
+
+        textarea.append('  ');
+    }
+
+    onBackspaceDown() {
+        const textarea = document.getElementsByClassName('.textarea');
+        textarea.value = textarea.value.slice(0, -1);
+
+    }
+
+    onEnterDown() {
+        const textarea = document.getElementsByClassName('.textarea');
+        textarea.append('\n');
+    }
+
+    onLetterDown(value) {
+        const textarea = document.getElementsByClassName('.textarea');
+        textarea.append(value);
     }
 }
