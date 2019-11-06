@@ -981,10 +981,10 @@ class Keyboard {
 
       if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
         this.onShiftUp();
-      } else if (event.code == 'AltLeft' || event.code == 'AltRight') {
+      } else if (event.code === 'AltLeft' || event.code === 'AltRight') {
         event.preventDefault();
         this.onAltUp();
-      } else if (event.code == 'Backspace' || event.code == 'Backspace') {
+      } else if (event.code === 'Backspace' || event.code === 'Backspace') {
         this.onBackspaceUp();
       }
     });
@@ -993,25 +993,25 @@ class Keyboard {
       const key = this.keys[keyCode];
 
       key.DOMElement.addEventListener('click', () => {
-        if (keyCode == 'ControlLeft' || keyCode == 'ControlRight') {
+        if (keyCode === 'ControlLeft' || keyCode === 'ControlRight') {
           return;
         }
 
-        if (keyCode == 'ShiftLeft' || keyCode == 'ShiftRight') {
+        if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
 
-        } else if (keyCode == 'MetaLeft' || keyCode == 'MetaRight') {
+        } else if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
 
-        } else if (keyCode == 'AltLeft' || keyCode == 'AltRight') {
+        } else if (keyCode === 'AltLeft' || keyCode === 'AltRight') {
 
-        } else if (keyCode == 'Delete') {
+        } else if (keyCode === 'Delete') {
 
-        } else if (keyCode == 'CapsLock') {
+        } else if (keyCode === 'CapsLock') {
           this.onCapsPressed();
-        } else if (keyCode == 'Tab') {
+        } else if (keyCode === 'Tab') {
           this.onTabClick();
-        } else if (keyCode == 'Backspace') {
+        } else if (keyCode === 'Backspace') {
           this.onBackspaceDown();
-        } else if (keyCode == 'Enter') {
+        } else if (keyCode === 'Enter') {
           this.onEnterDown();
         } else {
           this.onLetterDown(key.DOMElement.innerHTML);
