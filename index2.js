@@ -852,11 +852,6 @@ class Key {
     this.currentLayoutIndex = 0;
     this.maxLayoutIndex = this.values.length - 1;
 
-    const savedLayout = window.localStorage.getItem('layout');
-    if (savedLayout && savedLayout <= this.maxLayoutIndex) {
-      this.currentLayoutIndex = savedLayout;
-    }
-
     this.setInitialValue(isCapsOn);
   }
 
@@ -906,7 +901,6 @@ class Key {
       this.currentLayoutIndex++;
     }
 
-    window.localStorage.setItem('layout', this.currentLayoutIndex);
     this.setCurrentValue(isCapsOn, false);
   }
 }

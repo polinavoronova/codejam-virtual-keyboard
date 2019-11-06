@@ -17,7 +17,8 @@ function initKetboard() {
   keyboard.className = 'virtual-keyboard__keys';
   virtualKeyboard.appendChild(keyboard);
 
-  new Keyboard(keyLayout, keyboard, false);
+  /* eslint-disable no-unused-vars */
+  const kb = new Keyboard(keyLayout, keyboard, false);
 }
 
 initKetboard();
