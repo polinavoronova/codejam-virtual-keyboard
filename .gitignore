@@ -1,0 +1,7 @@
+﻿node_modules/
+.eslintrs.json
+eslint
+package.json
+styles.css.map
+.md
+dist/main.js
