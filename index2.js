@@ -848,8 +848,15 @@ class Key {
     this.values = values;
     this.DOMElement = DOMElement;
     this.isCapsOn = isCapsOn;
+
     this.currentLayoutIndex = 0;
     this.maxLayoutIndex = this.values.length - 1;
+
+    const savedLayout = window.localStorage.getItem('layout');
+    if (savedLayout && savedLayout <= this.maxLayoutIndex) {
+      this.currentLayoutIndex = savedLayout;
+    }
+
     this.setInitialValue(isCapsOn);
   }
 
@@ -899,6 +906,7 @@ class Key {
       this.currentLayoutIndex++;
     }
 
+    window.localStorage.setItem('layout', this.currentLayoutIndex);
     this.setCurrentValue(isCapsOn, false);
   }
 }
@@ -921,7 +929,7 @@ class Keyboard {
         const key = new Key([keyData.rus, keyData.eng], keyDOM, isCapsOn);
         keyRow.append(keyDOM); // add to the row
 
-        const initialValue = keyData.rus.lower;
+        const initialValue = key.values[key.currentLayoutIndex].lower;
         if (initialValue === 'Backspace' || initialValue === 'CapsLock' || initialValue === 'SHIFT' || initialValue === 'Shift' || initialValue === 'ENTER') {
           keyDOM.className = 'virtual-keyboard__key virtual-keyboard__key--wide';
         } else if (initialValue === ' ') {
@@ -949,16 +957,16 @@ class Keyboard {
         this.onLayoutSwitch();
       } else if (event.code === 'ControlLeft' || event.code === 'ControlRight') {
 
-      } else if (event.code === 'AltLeft' || event.code === 'AltRight') {
-
       } else if (event.code === 'CapsLock') {
         this.onCapsPressed();
       } else if (event.code === 'Tab') {
         this.onTabDown();
       } else if (event.code === 'Backspace') {
-        this.onBackspaceDown();
+
       } else if (event.code === 'Enter') {
         this.onEnterDown();
+      } else if (event.code === 'AltLeft' || event.code === 'AltRight') {
+
       } else {
         const value = this.keys[event.code].DOMElement.innerHTML;
 
@@ -973,12 +981,12 @@ class Keyboard {
 
       if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
         this.onShiftUp();
+      } else if (event.code == 'AltLeft' || event.code == 'AltRight') {
+        event.preventDefault();
+        this.onAltUp();
+      } else if (event.code == 'Backspace' || event.code == 'Backspace') {
+        this.onBackspaceUp();
       }
-    /*  else if (event.code === 'AltLeft' || event.code === 'AltRight') {
-        const textarea = document.querySelector('.textarea');
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-        textarea.focus();
-      }*/
     });
 
     for (const keyCode in this.keys) {
@@ -1037,6 +1045,14 @@ class Keyboard {
     this.keys.ShiftRight.DOMElement.addEventListener('mouseup', () => {
       this.onShiftUp();
     });
+
+    this.keys.Backspace.DOMElement.addEventListener('mouseup', () => {
+      this.onBackspaceUp();
+    });
+
+    this.keys.Alt.DOMElement.addEventListener('mouseup', () => {
+      this.onAltUp();
+    });
   }
 
 
@@ -1082,14 +1098,26 @@ class Keyboard {
     textarea.append('  ');
   }
 
+  onAltUp() {
+    const textarea = document.querySelector('.textarea');
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    textarea.focus();
+  }
+
   onBackspaceDown() {
     const textarea = document.querySelector('.textarea');
-    textarea.value = textarea.value.slice(0, -1);
+    textarea.value = textarea.value.substring(0, textarea.value.length - 1);
+  }
+
+  onBackspaceUp() {
+    const textarea = document.querySelector('.textarea');
     textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
   }
 
   onEnterDown() {
     const textarea = document.querySelector('.textarea');
+    textarea.focus();
     textarea.append('\n');
   }
 
@@ -1099,11 +1127,11 @@ class Keyboard {
   }
 }
 
-textArea = document.createElement('textarea');
-textArea.className = 'textarea';
-document.body.append(textArea);
-textArea.setAttribute('rows', 17);
-textArea.setAttribute('cols', 100);
+const textarea = document.createElement('textarea');
+textarea.className = 'textarea';
+document.body.append(textarea);
+textarea.setAttribute('rows', 17);
+textarea.setAttribute('cols', 100);
 
 const virtualKeyboard = document.createElement('div');
 virtualKeyboard.className = 'virtual-keyboard';
