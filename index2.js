@@ -949,6 +949,8 @@ class Keyboard {
         this.onLayoutSwitch();
       } else if (event.code === 'ControlLeft' || event.code === 'ControlRight') {
 
+      } else if (event.code === 'AltLeft' || event.code === 'AltRight') {
+
       } else if (event.code === 'CapsLock') {
         this.onCapsPressed();
       } else if (event.code === 'Tab') {
@@ -972,6 +974,11 @@ class Keyboard {
       if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
         this.onShiftUp();
       }
+    /*  else if (event.code === 'AltLeft' || event.code === 'AltRight') {
+        const textarea = document.querySelector('.textarea');
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+        textarea.focus();
+      }*/
     });
 
     for (const keyCode in this.keys) {
@@ -988,10 +995,12 @@ class Keyboard {
 
         } else if (keyCode == 'AltLeft' || keyCode == 'AltRight') {
 
+        } else if (keyCode == 'Delete') {
+
         } else if (keyCode == 'CapsLock') {
           this.onCapsPressed();
         } else if (keyCode == 'Tab') {
-          this.onTabDown();
+          this.onTabClick();
         } else if (keyCode == 'Backspace') {
           this.onBackspaceDown();
         } else if (keyCode == 'Enter') {
@@ -1063,13 +1072,20 @@ class Keyboard {
 
   onTabDown() {
     const textarea = document.querySelector('.textarea');
+    textarea.selectionEnd;
+    textarea.append('  ');
+    textarea.focus();
+  }
 
+  onTabClick() {
+    const textarea = document.querySelector('.textarea');
     textarea.append('  ');
   }
 
   onBackspaceDown() {
     const textarea = document.querySelector('.textarea');
     textarea.value = textarea.value.slice(0, -1);
+    textarea.focus();
   }
 
   onEnterDown() {
