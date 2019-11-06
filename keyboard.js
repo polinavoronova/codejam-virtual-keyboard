@@ -43,28 +43,46 @@ export default class Keyboard {
       key.DOMElement.style.transform = 'translateY(-4px)';
       key.DOMElement.style.transition = 'transform 10ms ease-in';
 
-      if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
-        this.onShiftDown();
-      } else if (event.shiftKey && event.altKey) {
+      if (event.altKey && event.shiftKey) {
         this.onLayoutSwitch();
-      } else if (event.code === 'ControlLeft' || event.code === 'ControlRight') {
         return;
-      } if (event.code === 'CapsLock') {
-        this.onCapsPressed();
-      } else if (event.code === 'Tab') {
-        this.onTabDown();
-      } else if (event.code === 'MetaLeft' || event.code === 'MetaRight') {
-        return;
-      } if (event.code === 'Backspace') {
-        return;
-      } if (event.code === 'AltLeft' || event.code === 'AltRight') {
-        return;
-      } if (event.code === 'Enter') {
-        this.onEnterDown();
-      } else {
-        const value = this.keys[event.code].DOMElement.innerHTML;
+      }
 
-        this.onLetterDown(value);
+      switch (event.code) {
+        case 'ShiftLeft':
+          this.onShiftDown();
+          break;
+        case 'ShiftRight':
+          this.onShiftDown();
+          break;
+        case 'ControlLeft':
+          break;
+        case 'ControlRight':
+          break;
+        case 'CapsLock':
+          this.onCapsPressed();
+          break;
+        case 'Tab':
+          event.preventDefault();
+          this.onTabDown();
+          break;
+        case 'MetaLeft':
+          break;
+        case 'MetaRight':
+          break;
+        case 'Backspace':
+
+          break;
+        case 'AltLeft':
+          break;
+        case 'AltRight':
+          break;
+        case 'Enter':
+          this.onEnterDown();
+          break;
+        default:
+          this.onLetterDown(this.keys[event.code].DOMElement.innerHTML);
+          break;
       }
     });
 
@@ -193,15 +211,14 @@ export default class Keyboard {
 
   onTabDown() {
     const textarea = document.querySelector('.textarea');
-    // textarea.selectionEnd;
     textarea.append('  ');
+    // textarea.setSelectionRange(textarea.value.length, textarea.value.length);
     textarea.focus();
   }
 
   onTabClick() {
     const textarea = document.querySelector('.textarea');
     textarea.append('  ');
-    // textarea.setSelectionRange(textarea.value.length, textarea.value.length);
   }
 
   onAltUp() {
